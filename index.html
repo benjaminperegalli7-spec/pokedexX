@@ -16,6 +16,8 @@
             color: #f8fafc;
             min-height: 100vh;
             overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
         }
         
         .orbitron {
@@ -66,10 +68,9 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .card-holo:hover {
+        .card-holo:active {
             border-color: #38bdf8;
-            transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.3);
+            transform: scale(0.97);
         }
 
         .custom-scrollbar::-webkit-scrollbar {
@@ -103,7 +104,7 @@
                 <h1 class="orbitron text-lg font-black text-white tracking-widest drop-shadow">NEO-POKÉDEX</h1>
                 <span class="text-[9px] bg-black/40 text-sky-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">IA Core v4.0</span>
             </div>
-            <button onclick="abrirConfigKey()" class="absolute top-2 right-2 bg-black/30 hover:bg-black/50 text-sky-300 p-2 rounded-full transition text-xs border border-sky-500/30">
+            <button id="btn-config-key" class="absolute top-2 right-2 bg-black/40 hover:bg-black/60 active:scale-90 text-sky-300 p-2.5 rounded-full transition text-xs border border-sky-500/40 z-10">
                 <i class="fa-solid fa-key"></i>
             </button>
         </header>
@@ -130,15 +131,16 @@
 
             <!-- Controls -->
             <div class="grid grid-cols-2 gap-3">
-                <label class="cursor-pointer bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3.5 px-4 rounded-xl text-center shadow-lg transition flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-sky-400/40 active:scale-95">
+                <button id="btn-camera" class="bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3.5 px-4 rounded-xl text-center shadow-lg transition flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-sky-400/40 active:scale-95">
                     <i class="fa-solid fa-camera text-base"></i> CÁMARA
-                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="procesarImagenSeleccionada(event)">
-                </label>
-                <label class="cursor-pointer bg-slate-900/90 hover:bg-slate-900 text-slate-200 font-bold py-3.5 px-4 rounded-xl text-center shadow-lg transition flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-slate-700 active:scale-95">
+                </button>
+                <button id="btn-gallery" class="bg-slate-900/90 hover:bg-slate-900 text-slate-200 font-bold py-3.5 px-4 rounded-xl text-center shadow-lg transition flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-slate-700 active:scale-95">
                     <i class="fa-solid fa-image text-base text-sky-400"></i> GALERÍA
-                    <input type="file" accept="image/*" class="hidden" onchange="procesarImagenSeleccionada(event)">
-                </label>
+                </button>
             </div>
+
+            <input type="file" id="input-file-camera" accept="image/*" capture="environment" class="hidden">
+            <input type="file" id="input-file-gallery" accept="image/*" class="hidden">
 
             <!-- Database / Collection -->
             <div class="flex-grow flex flex-col bg-slate-950/70 rounded-2xl p-4 border border-sky-500/20">
@@ -156,16 +158,17 @@
         </div>
     </div>
 
-    <!-- Modals & Dialogs -->
+    <!-- Modal Detalle -->
     <div id="modal-detalle" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="holo-screen w-full max-w-sm rounded-3xl p-5 relative border border-sky-500/60 max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
-            <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl bg-slate-800/80 w-8 h-8 rounded-full flex items-center justify-center border border-slate-700">
+            <button id="btn-close-detail" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl bg-slate-800/80 w-8 h-8 rounded-full flex items-center justify-center border border-slate-700">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div id="modal-contenido" class="flex flex-col items-center pt-2"></div>
         </div>
     </div>
 
+    <!-- Modal Key -->
     <div id="modal-key" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="holo-screen w-full max-w-sm rounded-3xl p-6 relative border border-sky-500/60 shadow-2xl">
             <div class="flex items-center gap-3 mb-3">
@@ -177,12 +180,13 @@
             <p class="text-xs text-slate-300 mb-4 leading-relaxed">Ingresa tu clave API de Gemini para habilitar el reconocimiento visual.</p>
             <input type="password" id="input-api-key" placeholder="AIzaSy..." class="w-full bg-slate-900/90 border border-sky-500/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sky-400 mb-5 font-mono shadow-inner">
             <div class="flex gap-3">
-                <button onclick="guardarApiKey()" class="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl orbitron text-xs shadow-lg tracking-wider">GUARDAR</button>
-                <button onclick="cerrarConfigKey()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-4 py-3 rounded-xl orbitron text-xs tracking-wider border border-slate-700">CANCELAR</button>
+                <button id="btn-save-key" class="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl orbitron text-xs shadow-lg tracking-wider">GUARDAR</button>
+                <button id="btn-cancel-key" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-4 py-3 rounded-xl orbitron text-xs tracking-wider border border-slate-700">CANCELAR</button>
             </div>
         </div>
     </div>
 
+    <!-- Custom Alert -->
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="holo-screen w-full max-w-xs rounded-2xl p-5 relative border border-sky-500/60 text-center shadow-2xl">
             <div class="w-12 h-12 rounded-full bg-sky-950 border border-sky-500 flex items-center justify-center text-sky-400 text-xl mx-auto mb-3">
@@ -191,7 +195,7 @@
             <h4 id="custom-alert-title" class="orbitron text-sm font-bold text-white mb-2">AVISO</h4>
             <p id="custom-alert-msg" class="text-xs text-slate-300 mb-5 leading-relaxed"></p>
             <div id="custom-alert-buttons" class="flex gap-2 justify-center">
-                <button onclick="cerrarCustomAlert()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs tracking-wider">ACEPTAR</button>
+                <button id="btn-alert-ok" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs tracking-wider">ACEPTAR</button>
             </div>
         </div>
     </div>
@@ -200,30 +204,54 @@
         let apiKeyGemini = localStorage.getItem("pokedex_api_key") || "";
         let coleccionCartas = JSON.parse(localStorage.getItem("pokedex_neogen_db_v2")) || [];
 
-        document.addEventListener("DOMContentLoaded", () => {
+        window.addEventListener("DOMContentLoaded", () => {
+            initEvents();
             renderCollection();
             if (!apiKeyGemini) {
-                setTimeout(() => abrirConfigKey(), 500);
+                setTimeout(() => abrirConfigKey(), 400);
             }
         });
 
-        function mostrarAlerta(titulo, mensaje, callbackOk = null) {
+        function initEvents() {
+            document.getElementById("btn-config-key").addEventListener("click", abrirConfigKey);
+            document.getElementById("btn-save-key").addEventListener("click", guardarApiKey);
+            document.getElementById("btn-cancel-key").addEventListener("click", cerrarConfigKey);
+            document.getElementById("btn-close-detail").addEventListener("click", cerrarModal);
+            document.getElementById("btn-alert-ok").addEventListener("click", cerrarCustomAlert);
+
+            const camBtn = document.getElementById("btn-camera");
+            const galBtn = document.getElementById("btn-gallery");
+            const inputCam = document.getElementById("input-file-camera");
+            const inputGal = document.getElementById("input-file-gallery");
+
+            camBtn.addEventListener("click", () => {
+                if (!apiKeyGemini) { abrirConfigKey(); return; }
+                inputCam.click();
+            });
+
+            galBtn.addEventListener("click", () => {
+                if (!apiKeyGemini) { abrirConfigKey(); return; }
+                inputGal.click();
+            });
+
+            inputCam.addEventListener("change", (e) => procesarImagenSeleccionada(e));
+            inputGal.addEventListener("change", (e) => procesarImagenSeleccionada(e));
+        }
+
+        function mostrarAlerta(titulo, mensaje, callbackOk) {
             document.getElementById("custom-alert-title").innerText = titulo;
             document.getElementById("custom-alert-msg").innerText = mensaje;
             const btnContainer = document.getElementById("custom-alert-buttons");
             
             if (callbackOk) {
-                btnContainer.innerHTML = `
-                    <button id="btn-cancel" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl orbitron text-xs">CANCELAR</button>
-                    <button id="btn-confirm" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs">CONFIRMAR</button>
-                `;
-                document.getElementById("btn-cancel").onclick = cerrarCustomAlert;
-                document.getElementById("btn-confirm").onclick = () => {
+                btnContainer.innerHTML = '<button id="btn-alert-cancel" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl orbitron text-xs">CANCELAR</button><button id="btn-alert-confirm" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs">CONFIRMAR</button>';
+                document.getElementById("btn-alert-cancel").onclick = cerrarCustomAlert;
+                document.getElementById("btn-alert-confirm").onclick = () => {
                     cerrarCustomAlert();
                     callbackOk();
                 };
             } else {
-                btnContainer.innerHTML = `<button onclick="cerrarCustomAlert()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs tracking-wider">ACEPTAR</button>`;
+                btnContainer.innerHTML = '<button onclick="cerrarCustomAlert()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs tracking-wider">ACEPTAR</button>';
             }
             document.getElementById("modal-custom-alert").classList.remove("hidden");
         }
@@ -266,19 +294,15 @@
             const file = event.target.files[0];
             if (!file) return;
 
-            if (!apiKeyGemini) {
-                abrirConfigKey();
-                return;
-            }
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 const base64Image = e.target.result;
-                comprimirImagen(base64Image, 200, 200, (thumbBase64) => {
+                comprimirImagen(base64Image, 300, 300, (thumbBase64) => {
                     consultarIAConPaciencia(base64Image, thumbBase64);
                 });
             };
             reader.readAsDataURL(file);
+            event.target.value = "";
         }
 
         function comprimirImagen(base64, maxWidth, maxHeight, callback) {
@@ -290,33 +314,27 @@
                 let height = img.height;
 
                 if (width > height) {
-                    if (width > maxWidth) {
-                        height *= maxWidth / width;
-                        width = maxWidth;
-                    }
+                    if (width > maxWidth) { height *= maxWidth / width; width = maxWidth; }
                 } else {
-                    if (height > maxHeight) {
-                        width *= maxHeight / height;
-                        height = maxHeight;
-                    }
+                    if (height > maxHeight) { width *= maxHeight / height; height = maxHeight; }
                 }
 
                 canvas.width = width;
                 canvas.height = height;
                 const ctx = canvas.getContext('2d');
                 ctx.drawImage(img, 0, 0, width, height);
-                callback(canvas.toDataURL('image/jpeg', 0.75));
+                callback(canvas.toDataURL('image/jpeg', 0.8));
             };
         }
 
         async function consultarIAVisionConDetalle(base64ImageData, thumbBase64) {
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKeyGemini}`;
+            const apiUrl = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=' + apiKeyGemini;
 
             const payload = {
                 contents: [{
                     role: "user",
                     parts: [
-                        { text: "Eres la Pokédex IA avanzada. Analiza la imagen. Proporciona el nombre exacto, tipo y descripción usando este formato exacto:\nNOMBRE: [nombre exacto]\nTIPO: [tipo]\nDESC: [descripción breve]" },
+                        { text: "Eres la Pokédex IA avanzada. Analiza la imagen. Proporciona el nombre exacto, tipo y descripción breve usando este formato:\nNOMBRE: [nombre]\nTIPO: [tipo]\nDESC: [descripción]" },
                         {
                             inlineData: {
                                 mimeType: "image/jpeg",
@@ -335,14 +353,14 @@
             const result = await response.json();
 
             if (result.error) {
-                throw new Error(result.error.message || "Error en API Key o cuota de Gemini");
+                throw new Error(result.error.message || "Error en la API Key o cuota de Gemini");
             }
 
-            const candidate = result.candidates?.[0];
-            if (candidate && candidate.content?.parts?.[0]?.text) {
+            const candidate = result.candidates && result.candidates[0];
+            if (candidate && candidate.content && candidate.content.parts && candidate.content.parts[0].text) {
                 const rawText = candidate.content.parts[0].text.trim();
                 let nombre = "";
-                let tipo = "Especie / Objeto";
+                let tipo = "Objeto / Especie";
                 let desc = rawText;
 
                 const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
@@ -366,36 +384,12 @@
                 return {
                     name: nombre.replace(/[*_#]/g, '').trim(),
                     type: tipo.replace(/[*_#]/g, '').trim() || "Desconocido",
-                    desc: desc.replace(/[*_#]/g, '').trim() || "Analizado correctamente por la IA.",
+                    desc: desc.replace(/[*_#]/g, '').trim() || "Analizado por la IA.",
                     thumb: thumbBase64
                 };
             }
-            throw new Error("Respuesta vacía del modelo de IA");
+            throw new Error("Respuesta vacía del servidor.");
         }
 
         async function consultarIAConPaciencia(base64Image, thumbBase64) {
-            const scannerLaser = document.getElementById('scanner-laser');
-            const scannerText = document.getElementById('scanner-text');
-
-            scannerLaser.classList.remove('hidden');
-            scannerText.classList.remove('hidden');
-            scannerText.innerText = "ANALIZANDO CON GEMINI...";
-            hablarTexto("Analizando imagen...");
-
-            try {
-                const base64Data = base64Image.split(',')[1];
-                const datosCarta = await consultarIAVisionConDetalle(base64Data, thumbBase64);
-                
-                scannerLaser.classList.add('hidden');
-                scannerText.classList.add('hidden');
-
-                if (datosCarta && datosCarta.name) {
-                    coleccionCartas.unshift(datosCarta);
-                    localStorage.setItem("pokedex_neogen_db_v2", JSON.stringify(coleccionCartas));
-                    renderCollection();
-                    hablarTexto(`¡Registrado! ${datosCarta.name}`);
-                    mostrarInfo(0);
-                } else {
-                    throw new Error("No se pudo extraer la información.");
-                }
-            } catch (err) 
+            const scannerLaser = document.getElementById('sca
