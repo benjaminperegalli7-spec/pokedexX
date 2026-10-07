@@ -1,358 +1,401 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Pokédex IA - Cyber Edition</title>
+    <title>Pokédex Neo-Gen IA</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+        
         body {
-            background: radial-gradient(circle at center, #0a0f1d 0%, #030712 100%);
             font-family: 'Rajdhani', sans-serif;
-            color: #f3f4f6;
-            margin: 0;
-            padding: 12px;
-            display: flex;
-            justify-content: center;
+            background: radial-gradient(circle at center, #0f172a 0%, #020617 100%);
+            color: #f8fafc;
             min-height: 100vh;
+            overflow-x: hidden;
         }
+        
         .orbitron {
             font-family: 'Orbitron', sans-serif;
         }
-        .pokedex-chassis {
-            background: linear-gradient(135deg, #dc2626 0%, #991b1b 50%, #7f1d1d 100%);
-            border-radius: 32px;
-            box-shadow: 0 0 40px rgba(220, 38, 38, 0.4), inset 0 2px 6px rgba(255,255,255,0.3), inset 0 -8px 20px rgba(0,0,0,0.8);
-            width: 100%;
-            max-width: 460px;
-            padding: 24px;
-            border: 4px solid #f87171;
-            position: relative;
-            overflow: hidden;
+
+        .neo-device {
+            background: linear-gradient(135deg, #ef4444 0%, #b91c1c 50%, #7f1d1d 100%);
+            box-shadow: 0 20px 40px -10px rgba(239, 68, 68, 0.4), inset 0 2px 6px rgba(255, 255, 255, 0.4);
+            border: 3px solid #991b1b;
         }
-        .camera-lens {
-            width: 56px;
-            height: 56px;
-            background: radial-gradient(circle, #60a5fa 0%, #2563eb 60%, #1e3a8a 100%);
-            border-radius: 50%;
-            border: 4px solid #ffffff;
-            box-shadow: 0 0 25px #3b82f6, inset 0 3px 6px rgba(0,0,0,0.6);
-            position: relative;
+
+        .neo-lens {
+            box-shadow: 0 0 20px #38bdf8, inset 0 0 8px #e0f2fe;
+            animation: pulse-lens 2.5s infinite ease-in-out;
         }
-        .screen-bezel {
-            background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
-            border-radius: 24px;
-            padding: 18px;
-            margin-top: 16px;
-            margin-bottom: 20px;
-            border: 3px solid #334155;
-            box-shadow: inset 0 4px 12px rgba(0,0,0,0.8), 0 4px 12px rgba(0,0,0,0.5);
+
+        @keyframes pulse-lens {
+            0%, 100% { box-shadow: 0 0 15px #38bdf8, inset 0 0 6px #bae6fd; }
+            50% { box-shadow: 0 0 28px #0284c7, inset 0 0 12px #f0f9ff; }
         }
-        .screen {
-            background-color: #020617;
-            border-radius: 16px;
-            height: 260px;
-            position: relative;
-            overflow: hidden;
-            border: 3px solid #0ea5e9;
-            box-shadow: 0 0 15px rgba(14, 165, 233, 0.3), inset 0 0 20px rgba(0, 242, 254, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
+
+        .holo-screen {
+            background: linear-gradient(135deg, rgba(3, 7, 18, 0.95), rgba(15, 23, 42, 0.95));
+            border: 2px solid rgba(56, 189, 248, 0.4);
+            box-shadow: inset 0 0 25px rgba(56, 189, 248, 0.15), 0 8px 20px rgba(0, 0, 0, 0.6);
         }
-        #photo-preview {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #020617;
-        }
+
         @keyframes scanline {
-            0% { top: 0%; opacity: 0.8; }
+            0% { top: 0%; opacity: 0.7; }
             50% { opacity: 1; }
-            100% { top: 100%; opacity: 0.8; }
+            100% { top: 100%; opacity: 0.7; }
         }
-        .laser-scan {
-            animation: scanline 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+
+        .scanner-beam {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: #38bdf8;
+            box-shadow: 0 0 15px #38bdf8, 0 0 30px #0ea5e9;
+            animation: scanline 2s infinite ease-in-out;
         }
-        .holographic-card {
-            background: linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(59,130,246,0.15) 100%);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255,255,255,0.2);
+
+        .card-holo {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.85), rgba(30, 41, 59, 0.9));
+            border: 1px solid rgba(56, 189, 248, 0.25);
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .holographic-card:hover {
+
+        .card-holo:hover {
+            border-color: #38bdf8;
             transform: translateY(-3px) scale(1.02);
-            box-shadow: 0 10px 25px -5px rgba(59, 130, 246, 0.4);
-            border-color: #facc15;
+            box-shadow: 0 10px 20px -5px rgba(56, 189, 248, 0.3);
         }
+
         .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(3, 7, 18, 0.5);
         }
         .custom-scrollbar::-webkit-scrollbar-thumb {
-            background-color: #3b82f6;
-            border-radius: 4px;
-        }
-        .cyber-button {
-            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
-            box-shadow: 0 6px 0 #854d0e, 0 10px 20px rgba(234, 179, 8, 0.4);
-            transition: all 0.15s ease;
-        }
-        .cyber-button:active {
-            transform: translateY(4px);
-            box-shadow: 0 2px 0 #854d0e, 0 5px 10px rgba(234, 179, 8, 0.4);
+            background: rgba(56, 189, 248, 0.4);
+            border-radius: 3px;
         }
     </style>
 </head>
-<body>
+<body class="flex flex-col items-center justify-between p-3 sm:p-5">
 
-    <div class="pokedex-chassis flex flex-col">
-        <!-- Header con luces indicador y botón API -->
-        <div class="flex items-center justify-between mb-2">
+    <div class="w-full max-w-md mx-auto flex flex-col flex-grow pb-8">
+        
+        <!-- Header / Lenses -->
+        <header class="neo-device rounded-t-3xl p-4 mb-2 flex items-center justify-between shadow-xl relative">
             <div class="flex items-center gap-3">
-                <div class="camera-lens flex items-center justify-center">
-                    <div class="w-3 h-3 bg-white rounded-full opacity-90 animate-ping absolute"></div>
-                    <div class="w-2.5 h-2.5 bg-white rounded-full shadow-md"></div>
+                <div class="w-12 h-12 rounded-full neo-lens bg-gradient-to-tr from-sky-400 to-blue-600 border-3 border-white flex items-center justify-center">
+                    <div class="w-4 h-4 bg-white rounded-full opacity-90 animate-ping"></div>
                 </div>
-                <div class="flex gap-2">
-                    <div class="w-3.5 h-3.5 rounded-full bg-red-500 shadow-[0_0_10px_#ef4444] border border-red-300"></div>
-                    <div class="w-3.5 h-3.5 rounded-full bg-yellow-400 shadow-[0_0_10px_#facc15] border border-yellow-200"></div>
-                    <div class="w-3.5 h-3.5 rounded-full bg-emerald-400 shadow-[0_0_10px_#34d399] border border-emerald-200"></div>
+                <div class="flex gap-1.5">
+                    <div class="w-3 h-3 rounded-full bg-amber-400 border border-amber-600 shadow-sm"></div>
+                    <div class="w-3 h-3 rounded-full bg-emerald-400 border border-emerald-600 shadow-sm"></div>
                 </div>
             </div>
-            <button onclick="abrirConfiguracion()" class="bg-black/60 hover:bg-black/80 text-amber-300 px-3.5 py-1.5 rounded-xl border border-amber-500/50 shadow-lg text-xs font-bold flex items-center gap-2 cursor-pointer orbitron backdrop-blur-md">
-                <i class="fa-solid fa-microchip text-amber-400"></i> API Key
+            <div class="text-right">
+                <h1 class="orbitron text-lg font-black text-white tracking-widest drop-shadow">NEO-POKÉDEX</h1>
+                <span class="text-[9px] bg-black/40 text-sky-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">IA Core v4.0</span>
+            </div>
+            <button onclick="abrirConfigKey()" class="absolute top-2 right-2 bg-black/30 hover:bg-black/50 text-sky-300 p-2 rounded-full transition text-xs border border-sky-500/30">
+                <i class="fa-solid fa-key"></i>
             </button>
-        </div>
+        </header>
 
-        <!-- Visor Principal -->
-        <div class="screen-bezel">
-            <div class="flex justify-between items-center mb-2 px-1">
-                <span class="text-[10px] orbitron tracking-widest text-sky-400 font-bold uppercase"><i class="fa-solid fa-eye"></i> Visor Óptico IA</span>
-                <span class="text-[10px] font-mono text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded border border-emerald-800">gemini-3-flash-preview</span>
-            </div>
-            <div class="screen">
-                <img id="photo-preview" src="https://placehold.co/400x260/020617/38bdf8?text=C%C3%A1mara+Lista+TCG" alt="Visor" />
-                
-                <!-- Láser de escaneo -->
-                <div id="scanner-laser" class="hidden absolute left-0 w-full h-1 bg-gradient-to-r from-transparent via-cyan-400 to-transparent shadow-[0_0_15px_#22d3ee] z-20 laser-scan"></div>
-                <div id="scanner-text" class="hidden absolute bottom-3 left-3 right-3 text-center text-cyan-300 font-bold text-xs z-20 drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] bg-slate-950/90 py-1.5 px-3 rounded-lg border border-cyan-500/40 orbitron tracking-wider">
-                    Analizando carta Pokémon...
-                </div>
-            </div>
-            <div class="flex justify-between items-center mt-3 px-1">
-                <div class="w-8 h-2.5 rounded-full bg-red-900 border border-red-700 shadow-inner"></div>
-                <div class="w-24 h-1.5 bg-slate-700/80 rounded-full"></div>
-                <div class="w-4 h-4 rounded-full bg-red-950 border border-red-800"></div>
-            </div>
-        </div>
-
-        <!-- Botón de Disparo Principal -->
-        <div class="flex flex-col gap-3">
-            <input type="file" id="file-input" accept="image/*" capture="environment" class="hidden" onchange="procesarArchivoSubido(event)">
+        <!-- Main Body Case -->
+        <div class="neo-device rounded-b-3xl p-4 sm:p-5 flex flex-col flex-grow shadow-2xl gap-4">
             
-            <button onclick="dispararCamara()" class="cyber-button text-slate-950 font-black py-4 px-6 rounded-2xl flex items-center justify-center gap-3 text-base uppercase tracking-wider cursor-pointer text-center border-2 border-yellow-200 orbitron">
-                <i class="fa-solid fa-camera-rotate text-xl animate-pulse"></i> Escanear Carta Pokémon
+            <!-- Holo Viewfinder Screen -->
+            <div class="relative w-full aspect-[4/3] holo-screen rounded-2xl overflow-hidden flex flex-col items-center justify-center p-4">
+                <div id="scanner-laser" class="scanner-beam hidden"></div>
+                
+                <div id="preview-container" class="w-full h-full flex flex-col items-center justify-center text-center">
+                    <div class="w-16 h-16 rounded-full bg-sky-950/70 border border-sky-400/50 flex items-center justify-center mb-3 text-sky-400 text-2xl shadow-[0_0_20px_rgba(56,189,248,0.25)]">
+                        <i class="fa-solid fa-eye animate-pulse"></i>
+                    </div>
+                    <h3 class="orbitron text-xs font-bold text-white tracking-wider mb-1">CÁMARA IA ACTIVA</h3>
+                    <p class="text-xs text-slate-400 max-w-[240px]">Toma una foto de cualquier objeto o Pokémon para escanearlo al instante.</p>
+                </div>
+
+                <div id="scanner-text" class="absolute bottom-3 bg-slate-950/90 border border-sky-500/60 px-4 py-1.5 rounded-full text-xs text-sky-300 font-bold hidden tracking-widest animate-pulse">
+                    Analizando con IA...
+                </div>
+            </div>
+
+            <!-- Controls -->
+            <div class="grid grid-cols-2 gap-3">
+                <label class="cursor-pointer bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3.5 px-4 rounded-xl text-center shadow-lg transition flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-sky-400/40 active:scale-95">
+                    <i class="fa-solid fa-camera text-base"></i> CÁMARA
+                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="procesarImagenSeleccionada(event)">
+                </label>
+                <label class="cursor-pointer bg-slate-900/90 hover:bg-slate-900 text-slate-200 font-bold py-3.5 px-4 rounded-xl text-center shadow-lg transition flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-slate-700 active:scale-95">
+                    <i class="fa-solid fa-image text-base text-sky-400"></i> GALERÍA
+                    <input type="file" accept="image/*" class="hidden" onchange="procesarImagenSeleccionada(event)">
+                </label>
+            </div>
+
+            <!-- Database / Collection -->
+            <div class="flex-grow flex flex-col bg-slate-950/70 rounded-2xl p-4 border border-sky-500/20">
+                <div class="flex justify-between items-center mb-3 pb-2 border-b border-sky-500/20">
+                    <h2 class="orbitron text-xs font-bold text-sky-300 tracking-wider flex items-center gap-2">
+                        <i class="fa-solid fa-database"></i> REGISTROS NEO
+                    </h2>
+                    <span id="contador-cartas" class="text-[10px] bg-sky-950/80 text-sky-300 border border-sky-800 px-2.5 py-0.5 rounded-full font-bold orbitron">0 Registrados</span>
+                </div>
+                
+                <div id="grid-coleccion" class="grid grid-cols-3 gap-2.5 overflow-y-auto max-h-[280px] custom-scrollbar pr-1">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals & Dialogs -->
+    <div id="modal-detalle" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="holo-screen w-full max-w-sm rounded-3xl p-5 relative border border-sky-500/60 max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
+            <button onclick="cerrarModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-xl bg-slate-800/80 w-8 h-8 rounded-full flex items-center justify-center border border-slate-700">
+                <i class="fa-solid fa-xmark"></i>
             </button>
+            <div id="modal-contenido" class="flex flex-col items-center pt-2"></div>
         </div>
+    </div>
 
-        <!-- Sección de Colección -->
-        <div class="mt-5 bg-slate-950/80 rounded-2xl p-4 border-2 border-slate-800 flex-grow flex flex-col shadow-2xl backdrop-blur-md">
-            <div class="flex justify-between items-center mb-3 pb-2 border-b border-slate-800 text-xs text-slate-300 uppercase tracking-widest orbitron font-bold">
-                <span class="flex items-center gap-2 text-amber-400"><i class="fa-solid fa-box-archive"></i> Colección Infinita</span>
-                <span id="counter-stats" class="text-sky-400 font-mono">0 Registradas</span>
-            </div>
-            <div id="collection-grid" class="collection-grid grid grid-cols-2 gap-2.5 overflow-y-auto max-h-[220px] pr-1 custom-scrollbar">
-                <div class="text-slate-500 text-xs text-center col-span-2 py-8 flex flex-col items-center justify-center">
-                    <i class="fa-solid fa-fingerprint text-4xl mb-2 text-slate-700 animate-pulse"></i>
-                    Aún no hay cartas escaneadas.<br>¡Configura tu clave y escanea tu primera carta!
+    <div id="modal-key" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="holo-screen w-full max-w-sm rounded-3xl p-6 relative border border-sky-500/60 shadow-2xl">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-10 h-10 rounded-full bg-sky-950 border border-sky-500 flex items-center justify-center text-sky-400">
+                    <i class="fa-solid fa-key"></i>
                 </div>
+                <h3 class="orbitron text-sm font-bold text-sky-300 tracking-wider">CONFIGURAR GEMINI API KEY</h3>
+            </div>
+            <p class="text-xs text-slate-300 mb-4 leading-relaxed">Ingresa tu clave API de Gemini para habilitar el reconocimiento visual.</p>
+            <input type="password" id="input-api-key" placeholder="AIzaSy..." class="w-full bg-slate-900/90 border border-sky-500/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sky-400 mb-5 font-mono shadow-inner">
+            <div class="flex gap-3">
+                <button onclick="guardarApiKey()" class="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-bold py-3 rounded-xl orbitron text-xs shadow-lg tracking-wider">GUARDAR</button>
+                <button onclick="cerrarConfigKey()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold px-4 py-3 rounded-xl orbitron text-xs tracking-wider border border-slate-700">CANCELAR</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Información de Carta -->
-    <div id="modal-info" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 rounded-3xl w-full max-w-sm overflow-hidden border-2 border-amber-500/60 shadow-[0_0_50px_rgba(245,158,11,0.2)] text-white">
-            <div id="info-header" class="bg-gradient-to-r from-amber-600 to-yellow-500 p-4 text-slate-950 text-center font-black text-lg uppercase tracking-wider orbitron truncate">
-                Nombre de Carta
+    <div id="modal-custom-alert" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+        <div class="holo-screen w-full max-w-xs rounded-2xl p-5 relative border border-sky-500/60 text-center shadow-2xl">
+            <div class="w-12 h-12 rounded-full bg-sky-950 border border-sky-500 flex items-center justify-center text-sky-400 text-xl mx-auto mb-3">
+                <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <div class="p-5 flex flex-col items-center">
-                <div id="info-thumb-container" class="w-32 h-32 bg-slate-950 rounded-2xl mb-4 flex items-center justify-center border-2 border-amber-500/40 shadow-inner overflow-hidden relative group">
-                    <i id="info-icon" class="fa-solid fa-dragon text-4xl text-amber-500"></i>
-                </div>
-                <div id="info-type" class="bg-sky-500/20 text-sky-300 border border-sky-500/40 text-xs font-bold px-3 py-1 rounded-full mb-3 shadow-sm truncate max-w-full orbitron">Tipo</div>
-                <p id="info-desc" class="text-xs text-slate-300 text-center mb-5 leading-relaxed font-sans max-h-28 overflow-y-auto custom-scrollbar px-1 bg-slate-950/50 p-3 rounded-xl border border-slate-800 w-full">
-                    Descripción...
-                </p>
-                <div class="flex gap-2.5 w-full mb-2">
-                    <button onclick="editarCartaActual()" class="flex-1 bg-amber-600 hover:bg-amber-500 text-slate-950 py-3 rounded-xl font-black uppercase tracking-wider text-xs shadow-lg cursor-pointer orbitron flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-pen-to-square"></i> Editar
-                    </button>
-                    <button onclick="eliminarCartaActual()" class="flex-1 bg-red-600 hover:bg-red-500 text-white py-3 rounded-xl font-black uppercase tracking-wider text-xs shadow-lg cursor-pointer orbitron flex items-center justify-center gap-1.5">
-                        <i class="fa-solid fa-trash"></i> Eliminar
-                    </button>
-                </div>
-                <button onclick="cerrarModalInfo()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl font-bold uppercase tracking-wider text-xs shadow cursor-pointer orbitron">
-                    Cerrar Visor
-                </button>
+            <h4 id="custom-alert-title" class="orbitron text-sm font-bold text-white mb-2">AVISO</h4>
+            <p id="custom-alert-msg" class="text-xs text-slate-300 mb-5 leading-relaxed"></p>
+            <div id="custom-alert-buttons" class="flex gap-2 justify-center">
+                <button onclick="cerrarCustomAlert()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs tracking-wider">ACEPTAR</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Modal de Configuración API Key -->
-    <div id="modal-config" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 rounded-3xl w-full max-w-sm overflow-hidden border-2 border-red-600/60 shadow-[0_0_50px_rgba(239,68,68,0.2)] p-6 text-white">
-            <h3 class="text-base font-black text-yellow-400 mb-2 uppercase tracking-wide orbitron flex items-center gap-2">
-                <i class="fa-solid fa-key"></i> Configurar API Key
-            </h3>
-            <p class="text-xs text-slate-300 mb-4 leading-relaxed font-sans">
-                Ingresa tu clave de API gratuita de Google AI Studio. Esto activará el modelo <b>gemini-3-flash-preview</b> para reconocer tus cartas con precisión láser.
-            </p>
-            <input type="password" id="input-api-key" placeholder="Pega tu API Key aquí..." class="w-full bg-slate-950 border-2 border-slate-700 rounded-xl p-3.5 text-sm text-white mb-5 outline-none focus:border-yellow-400 font-mono shadow-inner" />
-            <div class="flex gap-2.5">
-                <button onclick="guardarApiKey()" class="flex-1 bg-yellow-400 hover:bg-yellow-300 text-slate-950 py-3 rounded-xl font-black uppercase tracking-wider text-xs shadow-lg cursor-pointer orbitron">
-                    Guardar Clave
-                </button>
-                <button onclick="cerrarConfiguracion()" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-200 py-3 rounded-xl font-bold uppercase tracking-wider text-xs shadow cursor-pointer orbitron">
-                    Cancelar
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal de Alerta Personalizada (Sin usar alert nativo) -->
-    <div id="modal-alert" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md hidden flex items-center justify-center z-50 p-4">
-        <div class="bg-slate-900 rounded-3xl w-full max-w-xs overflow-hidden border-2 border-sky-500/60 shadow-[0_0_40px_rgba(14,165,233,0.2)] p-6 text-white text-center">
-            <div class="w-12 h-12 bg-sky-500/20 rounded-full flex items-center justify-center mx-auto mb-3 text-sky-400 text-xl border border-sky-500/40">
-                <i class="fa-solid fa-bell"></i>
-            </div>
-            <h4 class="text-sm font-black text-sky-400 mb-2 orbitron uppercase tracking-wider">Aviso Pokédex</h4>
-            <p id="alert-message-text" class="text-xs text-slate-300 mb-5 leading-relaxed font-sans">Mensaje...</p>
-            <button onclick="cerrarAlertPersonalizado()" class="w-full bg-sky-500 hover:bg-sky-400 text-slate-950 py-3 rounded-xl font-black uppercase tracking-wider text-xs shadow-lg cursor-pointer orbitron">
-                Entendido
-            </button>
         </div>
     </div>
 
     <script>
-        let coleccionCartas = [];
-        try {
-            coleccionCartas = JSON.parse(localStorage.getItem("pokedex_infinito_cartas_cyber_v1")) || [];
-        } catch (e) {
-            coleccionCartas = [];
-        }
-        let cartaSeleccionadaIndex = null;
-        let apiKeyGemini = localStorage.getItem("pokedex_gemini_api_key") || "";
+        let apiKeyGemini = localStorage.getItem("pokedex_api_key") || "";
+        let coleccionCartas = JSON.parse(localStorage.getItem("pokedex_neogen_db_v2")) || [];
 
-        function abrirConfiguracion() {
-            document.getElementById('input-api-key').value = apiKeyGemini;
-            document.getElementById('modal-config').classList.remove('hidden');
+        document.addEventListener("DOMContentLoaded", () => {
+            renderCollection();
+            if (!apiKeyGemini) {
+                setTimeout(() => abrirConfigKey(), 500);
+            }
+        });
+
+        function mostrarAlerta(titulo, mensaje, callbackOk = null) {
+            document.getElementById("custom-alert-title").innerText = titulo;
+            document.getElementById("custom-alert-msg").innerText = mensaje;
+            const btnContainer = document.getElementById("custom-alert-buttons");
+            
+            if (callbackOk) {
+                btnContainer.innerHTML = `
+                    <button id="btn-cancel" class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold py-2.5 rounded-xl orbitron text-xs">CANCELAR</button>
+                    <button id="btn-confirm" class="flex-1 bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs">CONFIRMAR</button>
+                `;
+                document.getElementById("btn-cancel").onclick = cerrarCustomAlert;
+                document.getElementById("btn-confirm").onclick = () => {
+                    cerrarCustomAlert();
+                    callbackOk();
+                };
+            } else {
+                btnContainer.innerHTML = `<button onclick="cerrarCustomAlert()" class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-2.5 rounded-xl orbitron text-xs tracking-wider">ACEPTAR</button>`;
+            }
+            document.getElementById("modal-custom-alert").classList.remove("hidden");
         }
 
-        function cerrarConfiguracion() {
-            document.getElementById('modal-config').classList.add('hidden');
+        function cerrarCustomAlert() {
+            document.getElementById("modal-custom-alert").classList.add("hidden");
+        }
+
+        function abrirConfigKey() {
+            document.getElementById("input-api-key").value = apiKeyGemini;
+            document.getElementById("modal-key").classList.remove("hidden");
+        }
+
+        function cerrarConfigKey() {
+            document.getElementById("modal-key").classList.add("hidden");
         }
 
         function guardarApiKey() {
-            const val = document.getElementById('input-api-key').value.trim();
-            apiKeyGemini = val;
-            localStorage.setItem("pokedex_gemini_api_key", val);
-            cerrarConfiguracion();
+            const val = document.getElementById("input-api-key").value.trim();
             if (val) {
-                mostrarAlertPersonalizado("¡API Key guardada correctamente en el núcleo neural!");
+                apiKeyGemini = val;
+                localStorage.setItem("pokedex_api_key", val);
+                cerrarConfigKey();
+                mostrarAlerta("ÉXITO", "API Key guardada correctamente.");
             } else {
-                mostrarAlertPersonalizado("La clave de API está vacía.");
+                mostrarAlerta("AVISO", "Por favor ingresa una clave válida.");
             }
         }
 
-        function dispararCamara() {
-            if (!apiKeyGemini) {
-                abrirConfiguracion();
-                mostrarAlertPersonalizado("Por favor ingresa primero tu API Key de Gemini en el botón superior.");
-                return;
+        function hablarTexto(texto) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(texto);
+                utterance.lang = 'es-ES';
+                window.speechSynthesis.speak(utterance);
             }
-            const input = document.getElementById('file-input');
-            input.value = ''; 
-            input.click();
         }
 
-        function renderCollection() {
-            const collectionGrid = document.getElementById('collection-grid');
-            if (!collectionGrid) return;
-            collectionGrid.innerHTML = '';
-
-            if (coleccionCartas.length === 0) {
-                collectionGrid.innerHTML = `
-                    <div class="text-slate-500 text-xs text-center col-span-2 py-8 flex flex-col items-center justify-center">
-                        <i class="fa-solid fa-fingerprint text-4xl mb-2 text-slate-700 animate-pulse"></i>
-                        Aún no hay cartas escaneadas.<br>¡Configura tu clave y escanea tu primera carta!
-                    </div>
-                `;
-                document.getElementById('counter-stats').innerText = `0 Registradas`;
-                return;
-            }
-
-            coleccionCartas.forEach((card, index) => {
-                const cardDiv = document.createElement('div');
-                cardDiv.className = `holographic-card p-2.5 rounded-2xl text-center cursor-pointer flex flex-col justify-between relative overflow-hidden`;
-                
-                let thumbHtml = `<i class="fa-solid ${card.icon || 'fa-dragon'} text-2xl text-amber-400 my-2"></i>`;
-                if (card.thumb) {
-                    thumbHtml = `<img src="${card.thumb}" class="w-full h-16 object-cover rounded-xl mb-1.5 border border-amber-500/40 shadow" alt="Carta" />`;
-                }
-
-                cardDiv.innerHTML = `
-                    <div class="flex justify-between items-center text-[10px] text-amber-300 font-mono">
-                        <span class="bg-amber-500/20 px-1.5 py-0.5 rounded border border-amber-500/30">#${index + 1}</span>
-                        <i class="fa-solid fa-bolt text-amber-400"></i>
-                    </div>
-                    <div>
-                        ${thumbHtml}
-                        <div class="text-xs truncate tracking-tight font-black orbitron text-white">${card.name}</div>
-                    </div>
-                    <div class="text-[9px] bg-slate-900/80 text-sky-300 py-0.5 px-1 rounded uppercase tracking-tighter truncate border border-slate-700 mt-1">${card.type || 'Pokémon TCG'}</div>
-                `;
-                cardDiv.onclick = () => mostrarInfo(index);
-                collectionGrid.appendChild(cardDiv);
-            });
-
-            document.getElementById('counter-stats').innerText = `${coleccionCartas.length} Registradas`;
-        }
-
-        async function procesarArchivoSubido(event) {
+        function procesarImagenSeleccionada(event) {
             const file = event.target.files[0];
             if (!file) return;
 
+            if (!apiKeyGemini) {
+                abrirConfigKey();
+                return;
+            }
+
             const reader = new FileReader();
-            reader.onload = async function(e) {
-                const imgOriginal = new Image();
-                imgOriginal.src = e.target.result;
-                imgOriginal.onload = async () => {
-                    try {
-                        const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 900;
-                        const scaleSize = MAX_WIDTH / imgOriginal.width;
-                        canvas.width = MAX_WIDTH;
-                        canvas.height = imgOriginal.height * (scaleSize < 1 ? scaleSize : 1);
-                        
-                        const ctx = canvas.getContext('2d');
-                        ctx.drawImage(imgOriginal, 0, 0, canvas.width, canvas.height);
-                        
-                        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.88);
-                        
-                        const thumbCanvas = document.createElement('canvas');
-                        thumbCanvas.width = 120;
-                        thumbCanvas.height = 120 * (canvas.height / canvas.width);
-                        const thumbCtx = thumbCanvas.getContext('2d');
-                        thumbCtx.drawImage(imgOriginal, 0, 0, thumbCanvas.width, thumbCanvas.height);
-                        const thumbBase64 = thumbCanvas.toDataURL('image/jpeg', 0.70);
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                comprimirImagen(base64Image, 200, 200, (thumbBase64) => {
+                    consultarIAConPaciencia(base64Image, thumbBase64);
+                });
+            };
+            reader.readAsDataURL(file);
+        }
 
-                        const photoPreview = document.getElementById('photo-preview');
-                        photoPreview.src = compressedBase64;
+        function comprimirImagen(base64, maxWidth, maxHeight, callback) {
+            const img = new Image();
+            img.src = base64;
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                let width = img.width;
+                let height = img.height;
 
-                        await consultarIAConPaciencia(compressedBase64, thumbBase64);
-                    } catch (err) {
-                        console.error("Error procesando imagen:", err);
- 
+                if (width > height) {
+                    if (width > maxWidth) {
+                        height *= maxWidth / width;
+                        width = maxWidth;
+                    }
+                } else {
+                    if (height > maxHeight) {
+                        width *= maxHeight / height;
+                        height = maxHeight;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                callback(canvas.toDataURL('image/jpeg', 0.75));
+            };
+        }
+
+        async function consultarIAVisionConDetalle(base64ImageData, thumbBase64) {
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${apiKeyGemini}`;
+
+            const payload = {
+                contents: [{
+                    role: "user",
+                    parts: [
+                        { text: "Eres la Pokédex IA avanzada. Analiza la imagen. Proporciona el nombre exacto, tipo y descripción usando este formato exacto:\nNOMBRE: [nombre exacto]\nTIPO: [tipo]\nDESC: [descripción breve]" },
+                        {
+                            inlineData: {
+                                mimeType: "image/jpeg",
+                                data: base64ImageData
+                            }
+                        }
+                    ]
+                }]
+            };
+
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const result = await response.json();
+
+            if (result.error) {
+                throw new Error(result.error.message || "Error en API Key o cuota de Gemini");
+            }
+
+            const candidate = result.candidates?.[0];
+            if (candidate && candidate.content?.parts?.[0]?.text) {
+                const rawText = candidate.content.parts[0].text.trim();
+                let nombre = "";
+                let tipo = "Especie / Objeto";
+                let desc = rawText;
+
+                const lines = rawText.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+                for (let line of lines) {
+                    if (line.toUpperCase().includes("NOMBRE:")) {
+                        nombre = line.replace(/NOMBRE:/i, '').trim();
+                    } else if (line.toUpperCase().includes("TIPO:")) {
+                        tipo = line.replace(/TIPO:/i, '').trim();
+                    } else if (line.toUpperCase().includes("DESC:")) {
+                        desc = line.replace(/DESC:/i, '').trim();
+                    }
+                }
+
+                if (!nombre && lines.length > 0) {
+                    nombre = lines[0].replace(/[*_#\[\]]/g, '').trim();
+                    if (lines.length > 1) desc = lines.slice(1).join(' ');
+                }
+
+                if (!nombre) nombre = "Registro Desconocido";
+
+                return {
+                    name: nombre.replace(/[*_#]/g, '').trim(),
+                    type: tipo.replace(/[*_#]/g, '').trim() || "Desconocido",
+                    desc: desc.replace(/[*_#]/g, '').trim() || "Analizado correctamente por la IA.",
+                    thumb: thumbBase64
+                };
+            }
+            throw new Error("Respuesta vacía del modelo de IA");
+        }
+
+        async function consultarIAConPaciencia(base64Image, thumbBase64) {
+            const scannerLaser = document.getElementById('scanner-laser');
+            const scannerText = document.getElementById('scanner-text');
+
+            scannerLaser.classList.remove('hidden');
+            scannerText.classList.remove('hidden');
+            scannerText.innerText = "ANALIZANDO CON GEMINI...";
+            hablarTexto("Analizando imagen...");
+
+            try {
+                const base64Data = base64Image.split(',')[1];
+                const datosCarta = await consultarIAVisionConDetalle(base64Data, thumbBase64);
+                
+                scannerLaser.classList.add('hidden');
+                scannerText.classList.add('hidden');
+
+                if (datosCarta && datosCarta.name) {
+                    coleccionCartas.unshift(datosCarta);
+                    localStorage.setItem("pokedex_neogen_db_v2", JSON.stringify(coleccionCartas));
+                    renderCollection();
+                    hablarTexto(`¡Registrado! ${datosCarta.name}`);
+                    mostrarInfo(0);
+                } else {
+                    throw new Error("No se pudo extraer la información.");
+                }
+            } catch (err) 
