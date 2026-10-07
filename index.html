@@ -67,11 +67,6 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .card-holo:active {
-            border-color: #38bdf8;
-            transform: scale(0.97);
-        }
-        
         .custom-scrollbar::-webkit-scrollbar { width: 5px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: rgba(3, 7, 18, 0.5); }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(56, 189, 248, 0.4); border-radius: 3px; }
@@ -84,7 +79,7 @@
         <!-- Cabecera de la Pokédex -->
         <header class="neo-device rounded-t-3xl p-4 mb-2 flex items-center justify-between shadow-xl relative">
             <div class="flex items-center gap-3">
-                <div class="w-12 h-12 rounded-full neo-lens bg-gradient-to-tr from-sky-400 to-blue-600 border-3 border-white flex items-center justify-center">
+                <div class="w-12 h-12 rounded-full neo-lens bg-gradient-to-tr from-sky-400 to-blue-600 border-2 border-white flex items-center justify-center">
                     <div class="w-4 h-4 bg-white rounded-full opacity-90 animate-ping"></div>
                 </div>
                 <div class="flex gap-1.5">
@@ -96,7 +91,7 @@
                 <h1 class="orbitron text-lg font-black text-white tracking-widest drop-shadow">NEO-POKÉDEX</h1>
                 <span class="text-[9px] bg-black/40 text-sky-300 px-2 py-0.5 rounded-full font-bold uppercase tracking-widest">IA Core v4.0</span>
             </div>
-            <button id="btn-config-key" class="absolute top-2 right-2 bg-black/40 text-sky-300 p-2.5 rounded-full border border-sky-500/40 z-10 active:bg-black/60">
+            <button onclick="abrirConfigKey()" class="absolute top-2 right-2 bg-black/40 text-sky-300 p-2.5 rounded-full border border-sky-500/40 z-10">
                 <i class="fa-solid fa-key"></i>
             </button>
         </header>
@@ -112,7 +107,7 @@
                         <i class="fa-solid fa-eye animate-pulse"></i>
                     </div>
                     <h3 class="orbitron text-xs font-bold text-white tracking-wider mb-1">CÁMARA IA ACTIVA</h3>
-                    <p class="text-xs text-slate-400 max-w-[240px]">Toma una foto de cualquier objeto o Pokémon para escanearlo al instante.</p>
+                    <p class="text-xs text-slate-400 max-w-[240px]">Toma una foto para escanear al instante.</p>
                 </div>
 
                 <div id="scanner-text" class="absolute bottom-3 bg-slate-950/90 border border-sky-500/60 px-4 py-1.5 rounded-full text-xs text-sky-300 font-bold hidden tracking-widest animate-pulse z-20">
@@ -120,19 +115,22 @@
                 </div>
             </div>
 
-            <!-- Botones de Acción -->
+            <!-- Botones NATIVOS de Acción (Solución al error del teléfono) -->
             <div class="grid grid-cols-2 gap-3">
-                <button id="btn-camera" class="bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-sky-400/40 active:scale-95">
+                <label class="cursor-pointer bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-sky-400/40 active:scale-95">
                     <i class="fa-solid fa-camera text-base"></i> CÁMARA
-                </button>
-                <button id="btn-gallery" class="bg-slate-900/90 text-slate-200 font-bold py-3.5 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-slate-700 active:scale-95">
+                    <!-- Esto abre la cámara nativa de Android sin depender de JavaScript -->
+                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="procesarImagen(event)">
+                </label>
+                
+                <label class="cursor-pointer bg-slate-900/90 text-slate-200 font-bold py-3.5 px-4 rounded-xl shadow-lg flex items-center justify-center gap-2 orbitron text-xs tracking-wider border border-slate-700 active:scale-95">
                     <i class="fa-solid fa-image text-base text-sky-400"></i> GALERÍA
-                </button>
+                    <!-- Esto abre la galería nativa -->
+                    <input type="file" accept="image/*" class="hidden" onchange="procesarImagen(event)">
+                </label>
             </div>
-            
-            <input type="file" id="input-cam" accept="image/*" capture="environment" class="hidden">
-            <input type="file" id="input-gal" accept="image/*" class="hidden">
 
+            <!-- Base de datos -->
             <div class="flex-grow flex flex-col bg-slate-950/70 rounded-2xl p-4 border border-sky-500/20">
                 <div class="flex justify-between items-center mb-3 pb-2 border-b border-sky-500/20">
                     <h2 class="orbitron text-xs font-bold text-sky-300 tracking-wider flex items-center gap-2">
@@ -151,7 +149,7 @@
     <!-- Modal Detalles -->
     <div id="modal-detalle" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="holo-screen w-full max-w-sm rounded-3xl p-5 relative border border-sky-500/60 max-h-[90vh] overflow-y-auto custom-scrollbar shadow-2xl">
-            <button id="btn-close-detail" class="absolute top-4 right-4 text-slate-400 bg-slate-800/80 w-8 h-8 rounded-full flex items-center justify-center border border-slate-700 active:bg-slate-700">
+            <button onclick="cerrarDetalle()" class="absolute top-4 right-4 text-slate-400 bg-slate-800/80 w-8 h-8 rounded-full flex items-center justify-center border border-slate-700">
                 <i class="fa-solid fa-xmark"></i>
             </button>
             <div id="modal-contenido" class="flex flex-col items-center pt-2"></div>
@@ -167,16 +165,16 @@
                 </div>
                 <h3 class="orbitron text-sm font-bold text-sky-300 tracking-wider">CLAVE DE ACCESO</h3>
             </div>
-            <p class="text-xs text-slate-300 mb-4 leading-relaxed">Ingresa tu API Key de Gemini para activar el núcleo de escaneo visual.</p>
+            <p class="text-xs text-slate-300 mb-4 leading-relaxed">Ingresa tu API Key de Gemini para activar la IA.</p>
             <input type="password" id="input-api-key" placeholder="AIzaSy..." class="w-full bg-slate-900/90 border border-sky-500/40 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-sky-400 mb-5 font-mono shadow-inner">
             <div class="flex gap-3">
-                <button id="btn-save-key" class="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold py-3 rounded-xl orbitron text-xs shadow-lg tracking-wider active:scale-95">GUARDAR</button>
-                <button id="btn-cancel-key" class="bg-slate-800 text-slate-300 font-bold px-4 py-3 rounded-xl orbitron text-xs tracking-wider border border-slate-700 active:bg-slate-700">CERRAR</button>
+                <button onclick="guardarApiKey()" class="flex-1 bg-gradient-to-r from-sky-500 to-blue-600 text-white font-bold py-3 rounded-xl orbitron text-xs shadow-lg tracking-wider">GUARDAR</button>
+                <button onclick="cerrarConfigKey()" class="bg-slate-800 text-slate-300 font-bold px-4 py-3 rounded-xl orbitron text-xs tracking-wider border border-slate-700">CERRAR</button>
             </div>
         </div>
     </div>
 
-    <!-- Modal Alertas Propias -->
+    <!-- Modal Alertas del Sistema -->
     <div id="modal-custom-alert" class="fixed inset-0 bg-black/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
         <div class="holo-screen w-full max-w-xs rounded-2xl p-5 relative border border-sky-500/60 text-center shadow-2xl">
             <div class="w-12 h-12 rounded-full bg-sky-950 border border-sky-500 flex items-center justify-center text-sky-400 text-xl mx-auto mb-3">
@@ -188,46 +186,28 @@
         </div>
     </div>
 
+    <!-- SCRIPT LIMPIO: Sin dependencias, todo nativo -->
     <script>
         let apiKeyGemini = localStorage.getItem("neo_pokedex_key") || "";
         let coleccionCartas = JSON.parse(localStorage.getItem("neo_pokedex_db")) || [];
         let itemIndexToDelete = -1;
 
-        // Iniciar eventos cuando cargue el DOM
-        document.addEventListener("DOMContentLoaded", () => {
-            configurarEventos();
+        // Cargar colección al iniciar
+        window.onload = () => {
             renderizarColeccion();
             if (!apiKeyGemini) {
-                setTimeout(() => document.getElementById("modal-key").classList.remove("hidden"), 500);
+                setTimeout(() => abrirConfigKey(), 500);
             }
-        });
+        };
 
-        function configurarEventos() {
-            // Controles de Cámara y Galería
-            document.getElementById("btn-camera").addEventListener("click", () => {
-                if (!apiKeyGemini) return abrirConfigKey();
-                document.getElementById("input-cam").click();
-            });
-
-            document.getElementById("btn-gallery").addEventListener("click", () => {
-                if (!apiKeyGemini) return abrirConfigKey();
-                document.getElementById("input-gal").click();
-            });
-
-            // Procesar imágenes al seleccionar
-            document.getElementById("input-cam").addEventListener("change", procesarImagen);
-            document.getElementById("input-gal").addEventListener("change", procesarImagen);
-
-            // Modales y Teclas
-            document.getElementById("btn-config-key").addEventListener("click", abrirConfigKey);
-            document.getElementById("btn-save-key").addEventListener("click", guardarApiKey);
-            document.getElementById("btn-cancel-key").addEventListener("click", () => document.getElementById("modal-key").classList.add("hidden"));
-            document.getElementById("btn-close-detail").addEventListener("click", () => document.getElementById("modal-detalle").classList.add("hidden"));
-        }
-
+        // Funciones de Configuración de Clave
         function abrirConfigKey() {
             document.getElementById("input-api-key").value = apiKeyGemini;
             document.getElementById("modal-key").classList.remove("hidden");
+        }
+
+        function cerrarConfigKey() {
+            document.getElementById("modal-key").classList.add("hidden");
         }
 
         function guardarApiKey() {
@@ -235,13 +215,14 @@
             if (val) {
                 apiKeyGemini = val;
                 localStorage.setItem("neo_pokedex_key", val);
-                document.getElementById("modal-key").classList.add("hidden");
-                mostrarAlerta("ÉXITO", "Núcleo de IA vinculado correctamente.");
+                cerrarConfigKey();
+                mostrarAlerta("ÉXITO", "IA vinculada correctamente.");
             } else {
                 mostrarAlerta("ERROR", "Debes ingresar una clave válida.");
             }
         }
 
+        // Sistema de Alertas Personalizadas (Para que funcione en App)
         function mostrarAlerta(titulo, mensaje, esConfirmacion = false, indexOculto = -1) {
             document.getElementById("custom-alert-title").innerText = titulo;
             document.getElementById("custom-alert-msg").innerText = mensaje;
@@ -263,19 +244,16 @@
             document.getElementById("modal-custom-alert").classList.add("hidden");
         }
 
-        function ejecutarEliminacion() {
-            if (itemIndexToDelete >= 0) {
-                coleccionCartas.splice(itemIndexToDelete, 1);
-                localStorage.setItem("neo_pokedex_db", JSON.stringify(coleccionCartas));
-                renderizarColeccion();
-                document.getElementById("modal-detalle").classList.add("hidden");
-            }
-            cerrarAlerta();
-        }
-
+        // Procesamiento de la Imagen
         function procesarImagen(event) {
             const file = event.target.files[0];
             if (!file) return;
+
+            if (!apiKeyGemini) {
+                abrirConfigKey();
+                event.target.value = ""; // Limpiar input
+                return;
+            }
 
             const reader = new FileReader();
             reader.onload = (e) => {
@@ -285,7 +263,7 @@
                 });
             };
             reader.readAsDataURL(file);
-            event.target.value = ""; // Reset input
+            event.target.value = ""; // Limpiar input para permitir sacar la misma foto 2 veces
         }
 
         function comprimirImagen(base64, callback) {
@@ -293,7 +271,7 @@
             img.onload = () => {
                 const canvas = document.createElement('canvas');
                 let w = img.width, h = img.height;
-                const max = 300;
+                const max = 400; // Resolución optimizada para IA
                 
                 if (w > h && w > max) { h *= max / w; w = max; }
                 else if (h > max) { w *= max / h; h = max; }
@@ -306,6 +284,7 @@
             img.src = base64;
         }
 
+        // Conexión con IA Gemini
         async function iniciarEscaneoIA(imagenCompleta, miniatura) {
             const scannerLaser = document.getElementById('scanner-laser');
             const scannerText = document.getElementById('scanner-text');
@@ -313,20 +292,16 @@
             scannerLaser.classList.remove('hidden');
             scannerText.classList.remove('hidden');
             
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                window.speechSynthesis.speak(new SpeechSynthesisUtterance("Analizando objetivo..."));
-            }
+            hablar("Analizando objetivo");
 
             try {
-                // Preparamos payload para Gemini 1.5 Flash (Más rápido y moderno)
                 const base64Data = imagenCompleta.split(',')[1];
                 const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKeyGemini}`;
                 
                 const payload = {
                     contents: [{
                         parts: [
-                            { text: "Eres una Pokédex científica de la vida real. Analiza la imagen y responde estrictamente con este formato exacto de 3 líneas:\nNOMBRE: [Nombre de la criatura, animal u objeto]\nTIPO: [Categoría o tipo lógico]\nDESC: [Descripción interesante y corta]" },
+                            { text: "Eres una Pokédex. Analiza la imagen y responde estrictamente con este formato:\nNOMBRE: [Nombre de la criatura u objeto]\nTIPO: [Categoría]\nDESC: [Descripción corta]" },
                             { inlineData: { mimeType: "image/jpeg", data: base64Data } }
                         ]
                     }]
@@ -340,11 +315,10 @@
 
                 const result = await response.json();
                 
-                if (result.error) throw new Error(result.error.message || "Error en la clave API");
+                if (result.error) throw new Error(result.error.message);
                 
                 const textoPlano = result.candidates[0].content.parts[0].text;
                 
-                // Parseo inteligente ultra seguro
                 let nombre = "Desconocido", tipo = "Misterio", desc = textoPlano;
                 const lineas = textoPlano.split('\n');
                 
@@ -354,10 +328,10 @@
                     if (linea.toUpperCase().includes("DESC:")) desc = linea.split(':')[1]?.trim() || desc;
                 });
 
-                // Limpiar asteriscos de markdown
-                nombre = nombre.replace(/\*/g, '');
-                tipo = tipo.replace(/\*/g, '');
-                desc = desc.replace(/\*/g, '');
+                // Limpiar caracteres raros
+                nombre = nombre.replace(/[*#]/g, '');
+                tipo = tipo.replace(/[*#]/g, '');
+                desc = desc.replace(/[*#]/g, '');
 
                 const nuevoRegistro = { nombre, tipo, desc, thumb: miniatura };
                 coleccionCartas.unshift(nuevoRegistro);
@@ -365,20 +339,49 @@
                 
                 renderizarColeccion();
                 abrirDetalle(0);
-                
-                if ('speechSynthesis' in window) {
-                    window.speechSynthesis.speak(new SpeechSynthesisUtterance("¡" + nombre + " registrado en la base de datos!"));
-                }
+                hablar(nombre + " registrado");
 
             } catch (error) {
-                console.error("Fallo IA:", error);
-                mostrarAlerta("ERROR DE CONEXIÓN", "Verifica tu conexión y que tu API Key sea correcta.\nDetalle: " + error.message);
+                mostrarAlerta("ERROR DE ANÁLISIS", "Fallo al conectar con la IA. Revisa tu API Key y tu internet.");
             } finally {
                 scannerLaser.classList.add('hidden');
                 scannerText.classList.add('hidden');
             }
         }
 
+        // Renderizar Cuadrícula
         function renderizarColeccion() {
             const grid = document.getElementById('grid-coleccion');
-            document.getElementById('contador-cartas').innerText = `${colec
+            document.getElementById('contador-cartas').innerText = `${coleccionCartas.length} REGISTROS`;
+            grid.innerHTML = '';
+
+            if (coleccionCartas.length === 0) {
+                grid.innerHTML = '<div class="col-span-3 text-center py-6 text-slate-500 text-[10px] uppercase">Base de datos vacía</div>';
+                return;
+            }
+
+            coleccionCartas.forEach((item, i) => {
+                grid.innerHTML += `
+                    <div onclick="abrirDetalle(${i})" class="card-holo rounded-xl overflow-hidden flex flex-col active:scale-95 transition cursor-pointer">
+                        <div class="aspect-[4/3] bg-slate-900 overflow-hidden relative">
+                            <img src="${item.thumb}" class="w-full h-full object-cover">
+                        </div>
+                        <div class="p-2 bg-slate-900/90 flex flex-col justify-center flex-grow border-t border-sky-500/20">
+                            <p class="text-[10px] font-bold text-white truncate orbitron text-center">${item.nombre}</p>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // Mostrar Detalle de la Carta
+        function abrirDetalle(index) {
+            const item = coleccionCartas[index];
+            const div = document.getElementById('modal-contenido');
+            
+            div.innerHTML = `
+                <div class="w-full aspect-[4/3] rounded-2xl overflow-hidden mb-4 border border-sky-500/50 shadow-xl bg-slate-900">
+                    <img src="${item.thumb}" class="w-full h-full object-cover">
+                </div>
+                <h2 class="orbitron text-lg font-bold text-sky-300 mb-1 text-center tracking-wider">${item.nombre}</h2>
+                <span class="text-[10px] bg-sky-950 text-sky-300 border border-sky-800 px-3 py-0.5 rounded-full font-bold mb-4 inline-block orb
